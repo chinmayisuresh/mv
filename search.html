@@ -1,0 +1,228 @@
+
+<html>
+    <body>
+    <div id="box">
+        <div id="name"></div>
+        <input type="textbox" autocomplete="off" spellcheck="false" id="input" placeholder="Search"> </input>
+        
+    <div id="show"></div>
+    </div>
+    </body>
+
+    <style>
+        #name{
+            width:200px;
+            height:50px;
+            background-color:#334366;
+            float:right;
+            color:white;
+            font-size:20px;
+            text-align:center;
+
+        }
+        body{
+            background-color:#192133 ;
+        }
+
+        #box{
+    
+            
+            background-color:#192133;
+
+            
+        }
+        #input{
+            height:50px;
+            width:400px;
+            border:none;
+            border-bottom:1px solid gray; 
+            
+            margin-left:35%;
+            margin-top:5%;
+            background-color:#192133;
+
+            color: rgb(248, 244, 244);
+            outline:none;
+
+            font-family: Arial, Helvetica, sans-serif;
+            font-size:15px;
+            
+        }
+        ::placeholder{
+            color:solid rgb(248, 244, 244);
+            font-size:15px;
+
+        }
+        #show{
+            
+            
+            margin-top:2%;
+            margin-left:8%;
+        }
+
+        .box1{
+            height: 300px;
+            width:250px;
+            
+
+            
+
+            
+        }
+        .big_box{
+            height:400px;
+            width:250px;
+            margin-left:10px;
+            margin-right:10px;
+            
+            float:left;
+            margin-bottom:10px;
+            margin-top:10px;
+            border-radius: 10px;
+            background-color:#334366
+        }
+        .image{
+            height:100%;
+            width:100%;
+            border-radius: 10px;
+            position:relative;
+        }
+        .notfound{
+            margin-left:27%;
+            height:400px;
+        }
+        .name{
+            color:rgb(194, 187, 187);
+            font-family:Arial, Helvetica, sans-serif;
+            font-size:15px;
+            line-height:1.8;
+            letter-spacing: 0.8;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: scroll;
+            overflow: hidden;
+            
+            text-align:center;
+        }
+        .recom{
+            
+            background-color:red;
+            border-radius: 10px;
+            color:rgb(194, 187, 187);
+            text-align:center;
+            
+        }
+           
+        
+    </style>
+
+      <script>
+          var a=addEventListener('keyup',function(event){
+        event.preventDefault();
+        if(event.keyCode===13){
+            showmovie();
+            
+        }
+    })
+          async function showmovie(){
+              
+              document.getElementById('show').innerHTML=null;
+
+            var userinput=document.getElementById('input').value;
+            console.log(userinput);
+              var res= await fetch(`http://www.omdbapi.com/?s=${userinput}&apikey=f2d15635`);
+              var data= await res.json();
+
+              console.log(data);
+              if(data.Error!="Movie not found!"){
+               var show=document.getElementById('show');
+               
+               console.log(show);
+               console.log(data.Search.length);
+               
+              for(var i=0;i<data.Search.length;i++){
+                  var poster=data.Search[i].Poster;
+                  if(poster!="N/A"){
+                      var big_box=document.createElement('div');
+                      big_box.setAttribute('class','big_box');
+                  var box1=document.createElement('div');
+                  box1.setAttribute('class','box1');
+                  var image=document.createElement('img');
+                  
+                  
+                  
+                  var name=document.createElement('div');
+                  name.innerHTML=data.Search[i].Title;
+                  name.setAttribute('class','name');
+
+                  var date=document.createElement('div');
+                  date.innerHTML="Year:"+data.Search[i].Year;
+                  date.setAttribute('class','name');
+
+                  var imdb=data.Search[i].imdbID;
+
+                  var res1= await fetch(`http://www.omdbapi.com/?i=${imdb}&apikey=f2d15635`);
+              var data1= await res1.json();
+                
+                
+                if(data1.imdbRating!='N/A'){
+                    var rating=document.createElement('div');
+                    rating.innerHTML="IMDB:"+data1.imdbRating;
+                    rating.setAttribute('class','name');
+
+
+                    if(data1.imdbRating>=8){
+                        var recom=document.createElement('div');
+                        recom.setAttribute('class','recom');
+                        recom.innerHTML="Recommended!"
+                        
+                    }
+                }
+
+                  image.setAttribute('class','image');
+                  image.src=poster;
+
+
+                
+                  
+                  
+                  if(data1.imdbRating!='N/A'){
+                      if(data1.imdbRating<8){
+                      box1.append(image,name,date,rating);}
+                      else{
+                        box1.append(image,name,date,rating,recom);
+                      }
+                  }
+                  else{
+                      box1.append(image,name,date);
+                  }
+                  big_box.append(box1);
+                  show.append(big_box);}
+
+
+                  console.log(data.Search[i].Poster);
+              }
+              
+          }
+        else{
+            document.getElementById('show').innerHTML=null;
+            var show=document.getElementById('show');
+            var notfound=document.createElement('img');
+            notfound.src="http://www.sitesbay.com/files/404.gif";
+            notfound.setAttribute('class','notfound');
+            show.append(notfound);
+
+        }}
+
+       var a=document.getElementById("name");
+       a.innerHTML=JSON.parse(localStorage.getItem('search'));
+        
+      </script>
+
+
+
+
+
+
+
+</html>
